@@ -1,27 +1,16 @@
-const http = require('http');
+from flask import Flask, request
 
-function add(a, b) {
-    return a + b;
-}
+app = Flask(__name__)
 
-const server = http.createServer((req, res) => {
-    if (req.url.startsWith('/add')) {
-        const url = new URL(req.url, `http://${req.headers.host}`);
-        const a = parseInt(url.searchParams.get('a'));
-        const b = parseInt(url.searchParams.get('b'));
+@app.route('/')
+def home():
+    return "Addition API is running!"
 
-        const result = add(a, b);
+@app.route('/add')
+def add():
+    a = int(request.args.get('a', 0))
+    b = int(request.args.get('b', 0))
+    return {"result": a + b}
 
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ result }));
-    } else {
-        res.writeHead(200);
-        res.end("Addition Service Running");
-    }
-});
-
-server.listen(3000, () => {
-    console.log("Server running on port 3000");
-});
-
-module.exports = add;
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=80)
